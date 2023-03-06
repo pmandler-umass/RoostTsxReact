@@ -7,7 +7,6 @@ const stations = ['KAPX', 'KBUF', 'KGRB'];
 export function UserInput() {
   
   function ButtonMenu(title: string, items: Array<string>) {
-    console.log(items);
     const menu_items = [];      
     for(let i = 0; i<items.length; i++){
         menu_items.push({ value: items[i], label: items[i] })
