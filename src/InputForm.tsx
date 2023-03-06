@@ -1,21 +1,10 @@
 
-import {Select, TextInput, Checkbox, Button, Group, Box } from '@mantine/core';
-import { useForm } from '@mantine/form';
+import {Select, TextInput, Text, SimpleGrid, Box } from '@mantine/core';
 const datasets = ['all_stations_v1', 'all_stations_v2'];
 const stations = ['KAPX', 'KBUF', 'KGRB'];
 
 
-export function Demo() {
-  const form = useForm({
-    initialValues: {
-      email: '',
-      termsOfService: false,
-    },
-    
-    validate: {
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
-    },
-  });
+export function UserInput() {
   
   function ButtonMenu(title: string, items: Array<string>) {
     console.log(items);
@@ -25,33 +14,26 @@ export function Demo() {
     } 
     
     return (
+      <SimpleGrid cols={2}>
+        <Text> {title} </Text>
         <Select
             label={title}
             placeholder="Pick one"
             data={menu_items}
         />
+      </SimpleGrid>
     );
   }
 
   return (
     <Box maw={300} mx="auto">
-      <form onSubmit={form.onSubmit((values) => console.log(values))}>
+      <form>
         {ButtonMenu("Data Sets", datasets)}
         {ButtonMenu("Radar Stations", stations)}
-        <Checkbox
-          mt="md"
-          label="I agree to sell my privacy"
-          {...form.getInputProps('termsOfService', { type: 'checkbox' })}
-        />
         <TextInput
-          withAsterisk
-          label="Email"
-          placeholder="your@email.com"
-          {...form.getInputProps('email')}
+          label="comments"
+          placeholder="comments"
         />
-        <Group position="right" mt="md">
-          <Button type="submit">Submit</Button>
-        </Group>
       </form>
     </Box>
   );
