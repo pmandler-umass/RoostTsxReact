@@ -1,9 +1,6 @@
 
-import {Select, TextInput, Checkbox, Button, Menu, Group, Box } from '@mantine/core';
+import {Select, TextInput, Checkbox, Button, Group, Box } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import {
-    IconChevronDown,
-  } from '@tabler/icons-react';
 const datasets = ['all_stations_v1', 'all_stations_v2'];
 const stations = ['KAPX', 'KBUF', 'KGRB'];
 
