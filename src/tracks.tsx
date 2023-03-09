@@ -1,5 +1,5 @@
 
-import {Box} from './utils';
+import {BoundingBox} from './utils';
 
 export enum TrackType {
     NONROOST = "nonroost",
@@ -14,7 +14,7 @@ export enum TrackType {
 export interface TrackInfo {
     id: string;
     type: TrackType;
-    series: Box[];
+    boundary: BoundingBox;
 };
 
 // PAM maybe move drawTrack here?

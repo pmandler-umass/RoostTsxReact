@@ -9,4 +9,4 @@ export interface Coordinate {
     y: number;
 };
 
-export type Box = Coordinate & Size;
+export type BoundingBox = Coordinate & Size;

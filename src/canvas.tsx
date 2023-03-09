@@ -1,9 +1,14 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Coordinate, Size} from './utils';
+import { BoundingBox, Coordinate, Size} from './utils';
+import {TrackInfo, TrackType } from './tracks';
 
-const TracksCanvas = (elementSize: Size) => {
+// PAM move mouse code here? and draw track
+
+// This adds a canvas to draw the tracks for the current time step
+const TracksCanvas = (elementSize: Size, tracks: TrackInfo[]) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const [trackBoxes, setTrackBoxes] = useState<TrackInfo[]>(tracks); 
 
     useEffect(() => {
         if (!canvasRef.current) {
@@ -15,15 +20,29 @@ const TracksCanvas = (elementSize: Size) => {
         canvas.height = elementSize.height;
         canvas.width = elementSize.width;
 
-        /* code for tracks 
-         const context = canvas.getContext('2d');
+        // code for tracks 
+        const context = canvas.getContext('2d');
         if (!context) {
             return;
         }
-        context.strokeRect(0, 0, 150, 100);  
-        */
+        for (var this_track of trackBoxes) {
+            let box_info = this_track.boundary;
+            context.strokeRect(box_info.x, box_info.y, box_info.width, box_info.height);
+            // add tool time with this_track.id and .type
+        }
         // eslint-disable-next-line  
     }, []);
+
+    useEffect(() => {
+        // This whole section of code is just to show we can update tracks!e
+        console.log("canvasRef set");
+        let new_box: BoundingBox = {x: 10, y:10, width: 50, height: 50};
+        let new_track: TrackInfo = {id: "pam", type: TrackType.NONROOST, boundary: new_box};
+        let old_tracks = trackBoxes;
+        old_tracks.push(new_track);
+        setTrackBoxes(old_tracks);
+        // eslint-disable-next-line  
+    }, [canvasRef]);
 
     return <canvas ref={canvasRef} />;
 
