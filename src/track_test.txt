@@ -1,26 +1,4 @@
-// this converts the input form selections to images/track info for ImageTrackViewer
-import { ImageTrackViewer } from "./imageTrackViewer";
-import { BoundingBox } from "./utils";
-import { TrackInfo, TrackType } from "./tracks";
-
-const basepath =
-  "http://doppler.cs.umass.edu/roost/img/all_stations_v1/vr05/2010/10/02/KBUF/";
-const imagefiles = [
-  "KBUF20101002_104650_V03.png",
-  "KBUF20101002_105634_V03.png",
-  "KBUF20101002_110617_V03.png",
-  "KBUF20101002_111600_V03.png",
-  "KBUF20101002_112544_V03.png",
-  "KBUF20101002_113527_V03.png",
-  "KBUF20101002_114511_V03.png",
-  "KBUF20101002_115455_V03.png",
-  "KBUF20101002_120439_V03.png",
-  "KBUF20101002_121422_V03.png",
-  "KBUF20101002_122406_V03.png",
-  "KBUF20101002_123350_V03.png",
-];
-
-const track_file_data = `49,KBUF20101002_114511_V03,32,0.334,13.66,356.411285,17.641350,-80.48,42.681343,8820.674896,20101002_074511
+49,KBUF20101002_114511_V03,32,0.334,13.66,356.411285,17.641350,-80.48,42.681343,8820.674896,20101002_074511
 49,KBUF20101002_115455_V03,41,0.180,17.84,344.470322,33.339212,-80.46,42.735462,16669.606073,20101002_075455
 49,KBUF20101002_120439_V03,51,0.224,32.12,337.144055,41.153357,-80.37,42.769709,20576.678554,20101002_080439
 25,KBUF20101002_104650_V03,-27,0.300,20.24,410.855072,21.005432,-80.44,42.436964,10502.716064,20101002_064650
@@ -55,56 +33,5 @@ const track_file_data = `49,KBUF20101002_114511_V03,32,0.334,13.66,356.411285,17
 58,KBUF20101002_121422_V03,61,0.257,207.22,310.244476,11.119476,-79.30,42.901092,5559.738159,20101002_081422
 59,KBUF20101002_121422_V03,61,0.164,12.90,198.658844,21.062386,-80.51,43.391056,10531.192780,20101002_081422
 60,KBUF20101002_121422_V03,61,0.149,13.48,374.288849,14.913994,-80.48,42.600884,7456.996918,20101002_081422
-61,KBUF20101002_121422_V03,61,0.130,140.41,334.041016,7.413513,-79.71,42.791235,3706.756592,20101002_081422`;
+61,KBUF20101002_121422_V03,61,0.130,140.41,334.041016,7.413513,-79.71,42.791235,3706.756592,20101002_081422
 
-export function loadTracks() {
-  var track_data: TrackInfo[][] = [];
-  console.log(imagefiles.length);
-  // create an empty set of tracks for each image
-  for (var i = 0; i <= imagefiles.length; i++) {
-    var image_tracks: TrackInfo[] = [];
-    track_data.push(image_tracks);
-  }
-
-  // track_id,filename,from_sunrise,det_score,x,y,r,lon,lat,radius,local_time
-  var track_lines: string[] = track_file_data.split("\n");
-  // create a TrackInfo for each line and connect it to the corresponding image.
-  for (var this_line of track_lines) {
-    var tokens = this_line.split(",");
-    // find index of image
-    let filename = tokens[1]+'.png'; 
-    let fileindex = imagefiles.indexOf(filename);
-    if (fileindex < 0) {
-        console.log("ERROR file not found: "+filename);
-        continue;
-    }
-
-    let new_box: BoundingBox = {
-      x: parseFloat(tokens[4]),
-      y: parseFloat(tokens[5]),
-      width: parseFloat(tokens[6]),
-      height: parseFloat(tokens[6]),
-    };
-    let new_track: TrackInfo = {
-      id: tokens[0],
-      type: TrackType.SWALLOW,
-      boundary: new_box,
-    };
-    track_data[fileindex].push(new_track);
-  }
-  console.log(track_data[3].length);
-  return track_data;
-}
-
-export const ImageDisplay = (track_data: TrackInfo[][]) => {
-  // will take form input including data_set, radar_station, date
-  // and convert to basepath.  Load(?) names of files in that dir to send to ImageTrack.
-  // find equiv track info, convert to TrackInfo type and send to ImageTrack.
-  let side = 300;
-  return ImageTrackViewer(
-    { width: side, height: side },
-    basepath,
-    imagefiles,
-    track_data
-  );
-}
