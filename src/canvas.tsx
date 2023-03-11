@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Text } from "@mantine/core";
 import { BoundingBox, Coordinate, Size } from "./utils";
 import { TrackInfo, TrackType } from "./tracks";
 
@@ -10,9 +11,6 @@ const TracksCanvas = (elementSize: Size, tracks: TrackInfo[]) => {
   const [mousePosY, setMousePosY] = useState(0);
 
   const handleMouseMove = (event: MouseEvent) => {
-    if (event.target !== null) {
-      console.log(event.target);
-    }
     setMousePosX(event.clientX - 0); //event.target.offsetLeft;);
     setMousePosY(event.clientY - 0); //event.target.offsetTop);
   };
@@ -68,7 +66,7 @@ const TracksCanvas = (elementSize: Size, tracks: TrackInfo[]) => {
   return (
     <div onMouseMove={() => handleMouseMove}>
       <canvas ref={canvasRef} />
-      <text>{"Mouse: " + String(mousePosX) + " , " + String(mousePosY)}</text>
+      <Text>{"Mouse: " + String(mousePosX) + " , " + String(mousePosY)}</Text>
     </div>
   );
 };

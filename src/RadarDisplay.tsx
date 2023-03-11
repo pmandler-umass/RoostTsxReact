@@ -59,7 +59,6 @@ const track_file_data = `49,KBUF20101002_114511_V03,32,0.334,13.66,356.411285,17
 
 export function loadTracks() {
   var track_data: TrackInfo[][] = [];
-  console.log(imagefiles.length);
   // create an empty set of tracks for each image
   for (var i = 0; i <= imagefiles.length; i++) {
     var image_tracks: TrackInfo[] = [];
@@ -92,7 +91,6 @@ export function loadTracks() {
     };
     track_data[fileindex].push(new_track);
   }
-  console.log(track_data[3].length);
   return track_data;
 }
 
@@ -100,7 +98,7 @@ export const ImageDisplay = (track_data: TrackInfo[][]) => {
   // will take form input including data_set, radar_station, date
   // and convert to basepath.  Load(?) names of files in that dir to send to ImageTrack.
   // find equiv track info, convert to TrackInfo type and send to ImageTrack.
-  let side = 300;
+  let side = 400;
   return ImageTrackViewer(
     { width: side, height: side },
     basepath,
