@@ -20,7 +20,6 @@ const TracksCanvas = (elementSize: Size, tracks: TrackInfo[]) => {
       return;
     }
     // set size of canvas that tracks can be drawn on
-    console.log("Init TracksCanvas to %d", elementSize);
     const canvas: HTMLCanvasElement = canvasRef.current;
     canvas.height = elementSize.height;
     canvas.width = elementSize.width;
@@ -43,15 +42,19 @@ const TracksCanvas = (elementSize: Size, tracks: TrackInfo[]) => {
     window.addEventListener("mousemove", handleMouseMove);
 
     return () => {
-        window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mousemove", handleMouseMove);
     };
     // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
     // This whole section of code is just to show we can update tracks!e
-    console.log("canvasRef set");
-    let new_box: BoundingBox = { x: 10, y: 10, width: 50, height: 50 };
+    let new_box: BoundingBox = {
+      x: 0,
+      y: 0,
+      width: elementSize.width,
+      height: elementSize.height,
+    };
     let new_track: TrackInfo = {
       id: "pam",
       type: TrackType.NONROOST,

@@ -1,10 +1,11 @@
-// this converts the input form selections to images/track info for ImageTrackViewer
-import { ImageTrackViewer } from "./imageTrackViewer";
+// Converts the input form selections to images/track info for ImageTrackViewer
 import { BoundingBox } from "./utils";
 import { TrackInfo, TrackType } from "./tracks";
+import { DataIdInfo } from "./InputForm";
 
 const basepath =
   "http://doppler.cs.umass.edu/roost/img/all_stations_v1/vr05/2010/10/02/KBUF/";
+
 const imagefiles = [
   "KBUF20101002_104650_V03.png",
   "KBUF20101002_105634_V03.png",
@@ -57,27 +58,39 @@ const track_file_data = `49,KBUF20101002_114511_V03,32,0.334,13.66,356.411285,17
 60,KBUF20101002_121422_V03,61,0.149,13.48,374.288849,14.913994,-80.48,42.600884,7456.996918,20101002_081422
 61,KBUF20101002_121422_V03,61,0.130,140.41,334.041016,7.413513,-79.71,42.791235,3706.756592,20101002_081422`;
 
-export function loadTracks() {
+export function getImagePath(input: DataIdInfo) {
+  console.log(input); // TODO will be used to choose data
+  return basepath;
+}
+
+export function loadImages(image_path: string) {
+  console.log(image_path); // TODO will be used to choose data
+  return imagefiles;
+}
+
+export function loadTracks(input: DataIdInfo, image_names: string[]) {
+  console.log(input); // will be used to choose data
   var track_data: TrackInfo[][] = [];
   // create an empty set of tracks for each image
-  for (var i = 0; i <= imagefiles.length; i++) {
+  for (var i = 0; i <= image_names.length; i++) {
     var image_tracks: TrackInfo[] = [];
     track_data.push(image_tracks);
   }
 
+  // create a TrackInfo for each line and add it to the corresponding image.
+  // csv file format:
   // track_id,filename,from_sunrise,det_score,x,y,r,lon,lat,radius,local_time
   var track_lines: string[] = track_file_data.split("\n");
-  // create a TrackInfo for each line and connect it to the corresponding image.
   for (var this_line of track_lines) {
     var tokens = this_line.split(",");
     // find index of image
-    let filename = tokens[1]+'.png'; 
-    let fileindex = imagefiles.indexOf(filename);
+    let filename = tokens[1] + ".png";
+    let fileindex = image_names.indexOf(filename);
     if (fileindex < 0) {
-        console.log("ERROR file not found: "+filename);
-        continue;
+      console.log("ERROR file not found: " + filename);
+      continue;
     }
-
+    // create TrackInfo
     let new_box: BoundingBox = {
       x: parseFloat(tokens[4]),
       y: parseFloat(tokens[5]),
@@ -92,17 +105,4 @@ export function loadTracks() {
     track_data[fileindex].push(new_track);
   }
   return track_data;
-}
-
-export const ImageDisplay = (track_data: TrackInfo[][]) => {
-  // will take form input including data_set, radar_station, date
-  // and convert to basepath.  Load(?) names of files in that dir to send to ImageTrack.
-  // find equiv track info, convert to TrackInfo type and send to ImageTrack.
-  let side = 400;
-  return ImageTrackViewer(
-    { width: side, height: side },
-    basepath,
-    imagefiles,
-    track_data
-  );
 }

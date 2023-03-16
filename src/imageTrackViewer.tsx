@@ -11,21 +11,28 @@ export function ImageTrackViewer(
   imageSeries: string[],
   all_tracks: TrackInfo[][]
 ) {
-  var index = 0;
-  var imagePath = basepath + imageSeries[index];
-  var tracks = all_tracks[index];
+  var image_path = __dirname + "/placeholder.png";
+  var tracks: TrackInfo[] = [];
+  // TODO handle moving forward and back through images
+  if (imageSeries.length > 0) {
+    var index = 0;
+    image_path = basepath + imageSeries[index];
+    if (all_tracks.length > 0) {
+      tracks = all_tracks[index];
+    }
+  }
 
   // PAM when return to 2 radars, may want to use <SimpleGrid cols={2}> from Mantine
   return (
     <div>
       <div>
         <BackgroundImage
-          src={imagePath}
+          src={image_path}
           radius="xs"
           miw={elementSize.width}
           mih={elementSize.height}
         >
-          {TracksCanvas(elementSize, tracks)}
+          <div>{TracksCanvas(elementSize, tracks)}</div>
         </BackgroundImage>
       </div>
       <Text> Radar </Text>
