@@ -3,40 +3,43 @@ import { useEffect, useState } from "react";
 import { UserInput, defaultInput } from "./InputForm";
 import * as roostData from "./radarDisplay";
 import { TrackInfo } from "./tracks";
-import { ImageTrackViewer } from "./imageTrackViewer";
+import { ImageTrackViewer, ImageTrackProps } from "./imageTrackViewer";
 import { Size } from "./utils";
 
 // Top level - connects user input to display and track edits to output
+const viewer_size: Size = { width: 400, height: 400 };
 
 function App() {
-  const [inputs, setInputs] = useState(defaultInput);
-  const [trackData, setTrackData] = useState<TrackInfo[][]>([]);
-  const [imagePath, setImagePath] = useState("");
-  const [imageList, setImageList] = useState<string[]>([]);
+  const [userInputs, setUserInputs] = useState(defaultInput);
+  const [trackViewProps, setTrackViewProps] = useState<ImageTrackProps>({elementSize: viewer_size, basepath: "", imageSeries: [], all_tracks:[]});
   const [comments, setComments] = useState("");
-  const viewer_size: Size = { width: 400, height: 400 };
 
   useEffect(() => {
     // User changed input info - if it is complete, pick radar image and load appropriate tracks
-    if (inputs.dataset !== "") {
-      var base_path = roostData.getImagePath(inputs);
-      setImagePath(base_path);
+    if (userInputs.dataset !== "") {
+      var base_path = roostData.getImagePath(userInputs);
       var image_names = roostData.loadImages(base_path);
-      setImageList(image_names);
-      setTrackData(roostData.loadTracks(inputs, image_names));
+      var tracks = roostData.loadTracks(userInputs, image_names);
+      var viewer_info: ImageTrackProps = {
+        elementSize: viewer_size,
+        basepath: base_path,
+        imageSeries: image_names,
+        all_tracks: tracks
+      }
+      setTrackViewProps(viewer_info);
     }
     if (comments !== "") {
       // TODO remove when comments in use
       console.log("Comments: " + comments);
     }
     // eslint-disable-next-line
-  }, [inputs]);
+  }, [userInputs]);
 
   return (
     <div className="App">
       <header className="App-header">
-        {UserInput(setInputs, setComments)}
-        {ImageTrackViewer(viewer_size, imagePath, imageList, trackData)}
+        {UserInput(setUserInputs, setComments)}
+        {ImageTrackViewer(trackViewProps)}
       </header>
     </div>
   );
