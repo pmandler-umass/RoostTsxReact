@@ -2,7 +2,6 @@ import "./App.css";
 import { useEffect, useState } from "react";
 import { UserInput, defaultInput } from "./InputForm";
 import * as roostData from "./radarDisplay";
-import { TrackInfo } from "./tracks";
 import { ImageTrackViewer, ImageTrackProps } from "./imageTrackViewer";
 import { Size } from "./utils";
 
@@ -39,8 +38,10 @@ function App() {
     <div className="App">
       <header className="App-header">
         {UserInput(setUserInputs, setComments)}
-        {ImageTrackViewer(trackViewProps)}
       </header>
+      <div className="App-body">
+        {ImageTrackViewer(trackViewProps)}
+      </div>
     </div>
   );
 }
