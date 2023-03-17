@@ -1,14 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Text } from "@mantine/core";
-import { BoundingBox, Coordinate, Size } from "./utils";
-import { TrackInfo, TrackType } from "./tracks";
+import { Coordinate, Size } from "./utils";
+import { TrackInfo } from "./tracks";
+
+export interface TracksCanvasProps {
+  canvasSize: Size,
+  trackBoxes: TrackInfo[]
+  // TODO going to need a trackSetter as well
+}
 
 // This adds a canvas to draw the tracks for the current time step
-const TracksCanvas = (elementSize: Size, tracks: TrackInfo[]) => {
+const TracksCanvas = (props: TracksCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [trackBoxes, setTrackBoxes] = useState<TrackInfo[]>(tracks);
   const [mousePosX, setMousePosX] = useState(0);
   const [mousePosY, setMousePosY] = useState(0);
+  const lineWidth = 8;
+  const trackColor = 'red';
 
   const handleMouseMove = (event: MouseEvent) => {
     setMousePosX(event.clientX - 0); //event.target.offsetLeft;);
@@ -21,26 +28,10 @@ const TracksCanvas = (elementSize: Size, tracks: TrackInfo[]) => {
     }
     // set size of canvas that tracks can be drawn on
     const canvas: HTMLCanvasElement = canvasRef.current;
-    canvas.height = elementSize.height;
-    canvas.width = elementSize.width;
+    canvas.height = props.canvasSize.height;
+    canvas.width = props.canvasSize.width;
 
-    // code for tracks
-    const context = canvas.getContext("2d");
-    if (!context) {
-      return;
-    }
-    for (var this_track of trackBoxes) {
-      let box_info = this_track.boundary;
-      context.strokeRect(
-        box_info.x,
-        box_info.y,
-        box_info.width,
-        box_info.height
-      );
-      // add tool time with this_track.id and .type
-    }
     window.addEventListener("mousemove", handleMouseMove);
-
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
     };
@@ -48,28 +39,35 @@ const TracksCanvas = (elementSize: Size, tracks: TrackInfo[]) => {
   }, []);
 
   useEffect(() => {
-    // This whole section of code is just to show we can update tracks!e
-    let new_box: BoundingBox = {
-      x: 0,
-      y: 0,
-      width: elementSize.width,
-      height: elementSize.height,
-    };
-    let new_track: TrackInfo = {
-      id: "pam",
-      type: TrackType.NONROOST,
-      boundary: new_box,
-    };
-    let old_tracks = trackBoxes;
-    old_tracks.push(new_track);
-    setTrackBoxes(old_tracks);
+    console.log(props);
+    if (props.trackBoxes.length >= 0 && canvasRef.current) {
+      console.log("P adding %d tracks", props.trackBoxes.length);
+      // code for tracks
+      let canvas: HTMLCanvasElement = canvasRef.current;
+      let context = canvas.getContext("2d");
+      if (context) {
+        context.strokeStyle = trackColor;
+        context.lineWidth = lineWidth;
+        for (var this_track of props.trackBoxes) {
+          var box_info = this_track.boundary;
+          console.log(box_info)
+          context.strokeRect(
+            box_info.x,
+            box_info.y,
+            box_info.width,
+            box_info.height
+          );
+          // add tool time with this_track.id and .type
+        }
+      }
+    }
     // eslint-disable-next-line
-  }, [canvasRef]);
+  }, [props]);
 
   return (
     <div onMouseMove={() => handleMouseMove}>
       <canvas ref={canvasRef} />
-      <Text>{"Mouse: " + String(mousePosX) + " , " + String(mousePosY)}</Text>
+      <Text c='white'>{"Mouse: " + String(mousePosX) + " , " + String(mousePosY)}</Text>
     </div>
   );
 };
