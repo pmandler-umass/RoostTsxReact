@@ -1,4 +1,7 @@
 // Converts the input form selections to images/track info for ImageTrackViewer
+// Currently hardcoded. Not clear if this will need a python backend in order to load the data.
+// TODO change name to radarParser?  It doesn't display anything anymore, it converts user selections
+// to appropriate images and tracks
 import { BoundingBox } from "./utils";
 import { TrackInfo, TrackType } from "./tracks";
 import { DataIdInfo } from "./InputForm";

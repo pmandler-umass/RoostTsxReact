@@ -1,14 +1,14 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Box, Group, Select, TextInput } from "@mantine/core";
-import { DatePicker } from '@mantine/dates';
+import { DatePicker } from "@mantine/dates";
+
+// TODO currently hardcoded - would like to make it parse the directories to get
+// the actual datasets that are currently available and
+// set the stations accordingly. May need python backend to work.
+// SHORTCUT - choose which datasets we want to let people use, hardcode stations per dataset.
+// Code for parsing directory structure should be in radarDisplay
 const datasets = ["all_stations_v1", "all_stations_v2"];
 const stations = ["KAPX", "KBUF", "KGRB"];
-
-/* when we are up to for looping through enums? 
-export enum DataSets {
-  V1 = "all_stations_v1",
-  V2 = "all_stations_v2",
-} */
 
 // Info needed to select radar data and tracks
 // comments are only for export so are handled separately
@@ -20,6 +20,7 @@ export interface DataIdInfo {
   day: number;
 }
 
+// default values make it easier to create instance
 export const defaultInput: DataIdInfo = {
   dataset: "",
   station: "",
@@ -38,6 +39,7 @@ export function UserInput(
   const [month, setMonth] = useState(defaultInput.month);
   const [day, setDay] = useState(defaultInput.day);
   const [comments, setComments] = useState("");
+  // PAM TODO replace year/month/day w. date - parse it out in radarDisplay.
   const [thisDate, setThisDate] = useState<Date | null>(null);
 
   function makeMenu(items: Array<string>) {
@@ -107,7 +109,11 @@ export function UserInput(
           size="lg"
         />
         <Group position="center">
-          <DatePicker value={thisDate} onChange={setThisDate} defaultLevel="decade" />
+          <DatePicker
+            value={thisDate}
+            onChange={setThisDate}
+            defaultLevel="decade"
+          />
         </Group>
         <TextInput
           label="Comments"

@@ -3,26 +3,30 @@ import { Text } from "@mantine/core";
 import { Coordinate, Size } from "./utils";
 import { TrackInfo } from "./tracks";
 
+// TracksCanvas is a mostly blank with a bounding box for each track.
+// TODO: handle mouse movements to edit the bounding boxes.
 export interface TracksCanvasProps {
-  canvasSize: Size,
-  trackBoxes: TrackInfo[]
+  canvasSize: Size;
+  trackBoxes: TrackInfo[];
   // TODO going to need a trackSetter as well
 }
 
-// This adds a canvas to draw the tracks for the current time step
 const TracksCanvas = (props: TracksCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [mousePosX, setMousePosX] = useState(0);
   const [mousePosY, setMousePosY] = useState(0);
   const lineWidth = 8;
-  const trackColor = 'red';
+  const trackColor = "red";
 
   const handleMouseMove = (event: MouseEvent) => {
+    // TODO the event.target doesn't seem to have the appropriate offset info
     setMousePosX(event.clientX - 0); //event.target.offsetLeft;);
     setMousePosY(event.clientY - 0); //event.target.offsetTop);
   };
 
   useEffect(() => {
+    // initialize the canvas to the correct size
+    // add a listener for mouse movements
     if (!canvasRef.current) {
       return;
     }
@@ -39,10 +43,10 @@ const TracksCanvas = (props: TracksCanvasProps) => {
   }, []);
 
   useEffect(() => {
+    // draw bounding boxes for current tracks
     console.log(props);
     if (props.trackBoxes.length >= 0 && canvasRef.current) {
       console.log("P adding %d tracks", props.trackBoxes.length);
-      // code for tracks
       let canvas: HTMLCanvasElement = canvasRef.current;
       let context = canvas.getContext("2d");
       if (context) {
@@ -50,14 +54,14 @@ const TracksCanvas = (props: TracksCanvasProps) => {
         context.lineWidth = lineWidth;
         for (var this_track of props.trackBoxes) {
           var box_info = this_track.boundary;
-          console.log(box_info)
+          console.log(box_info);
           context.strokeRect(
             box_info.x,
             box_info.y,
             box_info.width,
             box_info.height
           );
-          // add tool time with this_track.id and .type
+          // TODO add tool time with this_track.id and .type
         }
       }
     }
@@ -67,11 +71,15 @@ const TracksCanvas = (props: TracksCanvasProps) => {
   return (
     <div onMouseMove={() => handleMouseMove}>
       <canvas ref={canvasRef} />
-      <Text c='white'>{"Mouse: " + String(mousePosX) + " , " + String(mousePosY)}</Text>
+      <Text c="white">
+        {"Mouse: " + String(mousePosX) + " , " + String(mousePosY)}
+      </Text>
     </div>
   );
 };
 
+// Canvas as whole was grabbed off the web. It demos being able to draw on a canvas with a mouse.
+// It can go away, but for now it still may be useful as reference.
 const Canvas = ({ width, height }: Size) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isPainting, setIsPainting] = useState(false);
