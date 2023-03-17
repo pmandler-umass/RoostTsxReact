@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { Select, TextInput, Text, SimpleGrid, Box } from "@mantine/core";
+import { Box, Group, Select, TextInput } from "@mantine/core";
+import { DatePicker } from '@mantine/dates';
 const datasets = ["all_stations_v1", "all_stations_v2"];
 const stations = ["KAPX", "KBUF", "KGRB"];
 
@@ -37,6 +38,7 @@ export function UserInput(
   const [month, setMonth] = useState(defaultInput.month);
   const [day, setDay] = useState(defaultInput.day);
   const [comments, setComments] = useState("");
+  const [thisDate, setThisDate] = useState<Date | null>(null);
 
   function makeMenu(items: Array<string>) {
     var menu_items = [];
@@ -66,16 +68,17 @@ export function UserInput(
         day: day,
       };
       setDataInfo(data_info);
-      console.log("Updated InfoForm");
-    }
-    // TODO temporary compile code - remove when date selection is in
-    if (year !== 1999) {
-      setYear(1999);
-      setMonth(10);
-      setDay(1);
     }
     // eslint-disable-next-line
   }, [dataSet, station, year, month, day]);
+
+  useEffect(() => {
+    if (thisDate) {
+      setYear(thisDate.getFullYear());
+      setMonth(thisDate.getMonth());
+      setDay(thisDate.getDay());
+    }
+  }, [thisDate]);
 
   useEffect(() => {
     // This pushes local comment info up to main app
@@ -85,33 +88,33 @@ export function UserInput(
   }, [comments]);
 
   return (
-    <Box maw={300} mx="auto" pb={10}>
+    <Box miw={300} mx="auto" pb={10}>
       <form>
-        <SimpleGrid cols={2}>
-          <Text> "Data Sets" </Text>
-          <Select
-            label="Data Sets"
-            placeholder="Pick one"
-            data={dataSetMenu}
-            onSearchChange={setDataSet}
-            searchValue={dataSet}
-          />
-        </SimpleGrid>
-        <SimpleGrid cols={2}>
-          <Text> "Radar Stations" </Text>
-          <Select
-            label="Radar Stations"
-            placeholder="Pick one"
-            data={stationMenu}
-            onSearchChange={setStation}
-            searchValue={station}
-          />
-        </SimpleGrid>
+        <Select
+          label="Data Sets"
+          placeholder="Pick one"
+          data={dataSetMenu}
+          onSearchChange={setDataSet}
+          searchValue={dataSet}
+          size="lg"
+        />
+        <Select
+          label="Radar Stations"
+          placeholder="Pick one"
+          data={stationMenu}
+          onSearchChange={setStation}
+          searchValue={station}
+          size="lg"
+        />
+        <Group position="center">
+          <DatePicker value={thisDate} onChange={setThisDate} defaultLevel="decade" />
+        </Group>
         <TextInput
           label="Comments"
           placeholder="comments"
           value={comments}
           onChange={(event) => setComments(event.currentTarget.value)}
+          size="lg"
         />
       </form>
     </Box>
