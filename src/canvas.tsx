@@ -1,13 +1,14 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Text } from "@mantine/core";
-import { Coordinate, Size } from "./utils";
-import { TrackInfo } from "./tracks";
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Text } from '@mantine/core';
+import { Coordinate, Size } from './utils';
+import { TrackInfo } from './tracks';
 
 // TracksCanvas is a mostly blank with a bounding box for each track.
 // TODO: handle mouse movements to edit the bounding boxes.
 export interface TracksCanvasProps {
   canvasSize: Size;
   trackBoxes: TrackInfo[];
+  scale: number;      // multiplier for where track is relative to image
   // TODO going to need a trackSetter as well
 }
 
@@ -15,8 +16,8 @@ const TracksCanvas = (props: TracksCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [mousePosX, setMousePosX] = useState(0);
   const [mousePosY, setMousePosY] = useState(0);
-  const lineWidth = 8;
-  const trackColor = "red";
+  const lineWidth = 3;
+  const trackColor = 'red';
 
   const handleMouseMove = (event: MouseEvent) => {
     // TODO the event.target doesn't seem to have the appropriate offset info
@@ -35,31 +36,28 @@ const TracksCanvas = (props: TracksCanvasProps) => {
     canvas.height = props.canvasSize.height;
     canvas.width = props.canvasSize.width;
 
-    window.addEventListener("mousemove", handleMouseMove);
+    canvas.addEventListener('mousemove', handleMouseMove);
     return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
+      canvas.removeEventListener('mousemove', handleMouseMove);
     };
     // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
     // draw bounding boxes for current tracks
-    console.log(props);
     if (props.trackBoxes.length >= 0 && canvasRef.current) {
-      console.log("P adding %d tracks", props.trackBoxes.length);
       let canvas: HTMLCanvasElement = canvasRef.current;
-      let context = canvas.getContext("2d");
+      let context = canvas.getContext('2d');
       if (context) {
         context.strokeStyle = trackColor;
         context.lineWidth = lineWidth;
         for (var this_track of props.trackBoxes) {
           var box_info = this_track.boundary;
-          console.log(box_info);
           context.strokeRect(
-            box_info.x,
-            box_info.y,
-            box_info.width,
-            box_info.height
+            box_info.x*props.scale,
+            box_info.y*props.scale,
+            box_info.width*props.scale,
+            box_info.height*props.scale
           );
           // TODO add tool time with this_track.id and .type
         }
@@ -71,8 +69,8 @@ const TracksCanvas = (props: TracksCanvasProps) => {
   return (
     <div onMouseMove={() => handleMouseMove}>
       <canvas ref={canvasRef} />
-      <Text c="white">
-        {"Mouse: " + String(mousePosX) + " , " + String(mousePosY)}
+      <Text c='white' size='sm'>
+        {'Mouse: ' + String(mousePosX) + ' , ' + String(mousePosY)}
       </Text>
     </div>
   );
@@ -100,9 +98,9 @@ const Canvas = ({ width, height }: Size) => {
       return;
     }
     const canvas: HTMLCanvasElement = canvasRef.current;
-    canvas.addEventListener("mousedown", startPaint);
+    canvas.addEventListener('mousedown', startPaint);
     return () => {
-      canvas.removeEventListener("mousedown", startPaint);
+      canvas.removeEventListener('mousedown', startPaint);
     };
   }, [startPaint]);
 
@@ -125,9 +123,9 @@ const Canvas = ({ width, height }: Size) => {
     }
     const canvas: HTMLCanvasElement = canvasRef.current;
     //canvas.color = red
-    canvas.addEventListener("mousemove", paint);
+    canvas.addEventListener('mousemove', paint);
     return () => {
-      canvas.removeEventListener("mousemove", paint);
+      canvas.removeEventListener('mousemove', paint);
     };
   }, [paint]);
 
@@ -141,11 +139,11 @@ const Canvas = ({ width, height }: Size) => {
       return;
     }
     const canvas: HTMLCanvasElement = canvasRef.current;
-    canvas.addEventListener("mouseup", exitPaint);
-    canvas.addEventListener("mouseleave", exitPaint);
+    canvas.addEventListener('mouseup', exitPaint);
+    canvas.addEventListener('mouseleave', exitPaint);
     return () => {
-      canvas.removeEventListener("mouseup", exitPaint);
-      canvas.removeEventListener("mouseleave", exitPaint);
+      canvas.removeEventListener('mouseup', exitPaint);
+      canvas.removeEventListener('mouseleave', exitPaint);
     };
   }, [exitPaint]);
 
@@ -169,10 +167,10 @@ const Canvas = ({ width, height }: Size) => {
       return;
     }
     const canvas: HTMLCanvasElement = canvasRef.current;
-    const context = canvas.getContext("2d");
+    const context = canvas.getContext('2d');
     if (context) {
-      context.strokeStyle = "red";
-      context.lineJoin = "round";
+      context.strokeStyle = 'red';
+      context.lineJoin = 'round';
       context.lineWidth = 5;
 
       context.beginPath();
