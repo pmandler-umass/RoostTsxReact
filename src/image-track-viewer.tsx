@@ -33,12 +33,6 @@ export const ImageTrackViewer = (props: ImageTrackProps) => {
 
   useEffect(() => {
     // listen for keyboard events
-    // when I used this, handleKeyboardEvents acted like a constant and did not get updated values
-    /* window.addEventListener('keydown', handleKeyboardEvents); 
-    return () => {
-      window.removeEventListener('keydown', handleKeyboardEvents);
-    }; */
-
     window.addEventListener('keydown',  (e) => {
       setKeyDown(e.key);
     }); 

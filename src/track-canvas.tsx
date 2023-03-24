@@ -1,5 +1,5 @@
 import { FunctionComponent, useEffect, useRef, useState } from 'react';
-
+import { Coordinate } from './utils';
 export const CANVAS_WIDTH = 640;
 export const CANVAS_HEIGHT = 480;
 export const CIRCLE_RADIUS = 48;
@@ -20,7 +20,7 @@ export interface DraggableProps {
 }
 
 export const DraggableCircle: FunctionComponent<DraggableProps> = (props:DraggableProps) => {
-  const trackRef = useRef<HTMLInputElement>(null);
+  const trackRef = useRef<SVGCircleElement>(null);
   const [dragState, setDragState] = useState<DraggableState>({
         isDown: false,
         posX: props.initX,
@@ -28,9 +28,9 @@ export const DraggableCircle: FunctionComponent<DraggableProps> = (props:Draggab
         screenX: 0,
         screenY: 0,
   });
+  const [mousePosition, setMousePosition] = useState<Coordinate>({x: 0, y:0});
 
   const onMouseDown = (e: MouseEvent) => {
-    console.log(e);
     setDragState({
         ...dragState,
         isDown: true,
@@ -40,26 +40,27 @@ export const DraggableCircle: FunctionComponent<DraggableProps> = (props:Draggab
   };
 
   const onMouseMove = (e: MouseEvent) => {
-    console.log("onMouseMove");
-    if (!dragState.isDown) {
-      return;
-    }
-    console.log(e);
-    const shiftX = e.screenX - dragState.screenX;
-    const shiftY = e.screenY - dragState.screenY;
-    setDragState({
-      ...dragState,
-      posX: dragState.posX + shiftX,
-      posY: dragState.posY + shiftY,
-      screenX: e.screenX,
-      screenY: e.screenY,
-    });
+    setMousePosition({x: e.screenX, y:e.screenY});
   };
 
   const onMouseUp = (e: MouseEvent) => {
-    console.log(e);
     setDragState({ ...dragState, isDown: false, screenX: 0, screenY: 0 });
   };
+
+  useEffect(() => {
+    if (dragState.isDown) {
+      const shiftX = mousePosition.x - dragState.screenX;
+      const shiftY = mousePosition.y - dragState.screenY;
+      setDragState({
+        ...dragState,
+        posX: dragState.posX + shiftX,
+        posY: dragState.posY + shiftY,
+        screenX: mousePosition.x,
+        screenY: mousePosition.y,
+      });
+    }
+    // eslint-disable-next-line
+  }, [mousePosition]);
 
   useEffect(() => {
     // initialize the canvas to the correct size
@@ -67,32 +68,31 @@ export const DraggableCircle: FunctionComponent<DraggableProps> = (props:Draggab
     if (!trackRef.current) {
       return;
     }
-    console.log("Init circle");
-    const track_obj: HTMLInputElement = trackRef.current;
+    const track_obj: SVGCircleElement = trackRef.current;
     track_obj.addEventListener('mousemove', onMouseMove);
+    track_obj.addEventListener('mousedown', onMouseDown);
+    track_obj.addEventListener('mouseup', onMouseUp);
     return () => {
       track_obj.removeEventListener('mousemove', onMouseMove);
+      track_obj.removeEventListener('mousedown', onMouseDown);
+      track_obj.removeEventListener('mouseup', onMouseUp);
     };
     // eslint-disable-next-line
   }, []);
 
   return (
-    <div 
+    <circle
       ref={trackRef}
+      cx={dragState.posX}
+      cy={dragState.posY}
+      r={CIRCLE_RADIUS}
+      stroke={props.color}
+      fill={'light' + props.color}
+      strokeWidth='3'
       onMouseMove={() => onMouseMove}
-    >
-      <circle
-        cx={dragState.posX}
-        cy={dragState.posY}
-        r={CIRCLE_RADIUS}
-        stroke={props.color}
-        fill={'light' + props.color}
-        strokeWidth='3'
-        onMouseMove={() => onMouseMove}
-        onMouseDown={() => onMouseDown}
-        onMouseUp={() => onMouseUp}
-      />
-    </div>
+      onMouseDown={() => onMouseDown}
+      onMouseUp={() => onMouseUp}
+    />
   );
 }
 

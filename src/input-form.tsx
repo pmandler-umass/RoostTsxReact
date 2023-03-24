@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { Box, Button, Group, Select, TextInput } from '@mantine/core';
+import { Button, Group, Select, SimpleGrid, TextInput } from '@mantine/core';
 import { DatePicker } from '@mantine/dates';
 
 // TODO currently hardcoded - would like to make it parse the directories to get
@@ -62,6 +62,10 @@ export function UserInput(
   }
 
   useEffect(() => {
+    skipAll();
+  }, []);
+
+  useEffect(() => {
     // only call setDataInfo when all the info is in place
     // (except comments - they are optional)
     if (
@@ -99,41 +103,38 @@ export function UserInput(
   }, [comments]);
 
   return (
-    <Box miw={300} mx='auto' pb={10}>
-      <form>
-        <Button onClick={() => skipAll()}> Skip </Button>
-
-        <Select
-          label='Data Sets'
-          placeholder='Pick one'
-          data={dataSetMenu}
-          onSearchChange={setDataSet}
-          searchValue={dataSet}
-          size='lg'
+    <SimpleGrid cols={2}>
+      <Select
+        label='Data Sets'
+        placeholder='Pick one'
+        data={dataSetMenu}
+        onSearchChange={setDataSet}
+        searchValue={dataSet}
+        size='lg'
+      />
+      <Select
+        label='Radar Stations'
+        placeholder='Pick one'
+        data={stationMenu}
+        onSearchChange={setStation}
+        searchValue={station}
+        size='lg'
+      />
+      <Group position='center'>
+        <DatePicker
+          value={thisDate}
+          onChange={setThisDate}
+          defaultLevel='decade'
         />
-        <Select
-          label='Radar Stations'
-          placeholder='Pick one'
-          data={stationMenu}
-          onSearchChange={setStation}
-          searchValue={station}
-          size='lg'
-        />
-        <Group position='center'>
-          <DatePicker
-            value={thisDate}
-            onChange={setThisDate}
-            defaultLevel='decade'
-          />
-        </Group>
-        <TextInput
-          label='Comments'
-          placeholder='comments'
-          value={comments}
-          onChange={(event) => setComments(event.currentTarget.value)}
-          size='lg'
-        />
-      </form>
-    </Box>
+      </Group>
+      <TextInput
+        label='Comments'
+        placeholder='comments'
+        value={comments}
+        onChange={(event) => setComments(event.currentTarget.value)}
+        size='lg'
+      />
+      <Button onClick={() => skipAll()}> Skip </Button>
+    </SimpleGrid>
   );
 }
