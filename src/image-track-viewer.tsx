@@ -2,7 +2,7 @@
 // at any one time a single image is shown with associated tracks
 import { useEffect, useState } from 'react';
 import { BackgroundImage, Text } from '@mantine/core';
-import TracksCanvas, { TracksCanvasProps } from './canvas';
+import { TracksCanvas2, TracksCanvasProps2 } from './track-canvas';
 import { TrackInfo } from './tracks';
 import { Size } from './utils';
 
@@ -25,7 +25,7 @@ export const ImageTrackViewer = (props: ImageTrackProps) => {
   const [imageIndex, setImageIndex] = useState(-1);
   const [numImages, setNumImages] = useState(0);
   const [keyDown, setKeyDown] = useState('');
-  const [trackCanvasProps, setTrackCanvasProps] = useState<TracksCanvasProps>({
+  const [trackCanvasProps, setTrackCanvasProps] = useState<TracksCanvasProps2>({
     canvasSize: props.elementSize,
     trackBoxes: [],
     scale: 1,
@@ -123,7 +123,7 @@ export const ImageTrackViewer = (props: ImageTrackProps) => {
           miw={imageSize.width}
           mih={imageSize.height}
         >
-          {TracksCanvas(trackCanvasProps)}
+          {TracksCanvas2(trackCanvasProps)}
         </BackgroundImage>
       </div>
       <Text> Radar </Text>
