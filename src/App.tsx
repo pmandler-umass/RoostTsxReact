@@ -57,11 +57,13 @@ function App() {
       <div className='App-body'>
         {ImageTrackViewer(trackViewProps)}
       </div>
-      <svg style={{ width: trackCanvas.CANVAS_WIDTH + 'px', height: trackCanvas.CANVAS_HEIGHT + 'px', color: 'orange', border: '1px solid silver' }}>
-        <trackCanvas.DraggableCircle initX={viewer_size.width * .75} initY={viewer_size.width/2} color='green' />
-      </svg>
     </div>
   );
 }
 
+/*  <svg id="drag_space" style={{ width: trackCanvas.CANVAS_WIDTH + 'px', 
+                    height: trackCanvas.CANVAS_HEIGHT + 'px', 
+                    color: 'orange', border: '1px solid silver' }}>
+        <trackCanvas.DraggableRect initX={trackCanvas.SQUARE_LENGTH} initY={trackCanvas.SQUARE_LENGTH} color='blue' canvas_id='drag_space'/>
+      </svg>*/
 export default App;
